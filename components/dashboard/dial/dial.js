@@ -18,12 +18,51 @@ function dial(){
 			{"x": 90, "y": 180},
 		];
 
+	var config = {
+		size						: 200,
+		clipWidth					: 200,
+		clipHeight					: 110,
+		ringInset					: 20,
+		ringWidth					: 20,
+		
+		pointerWidth				: 10,
+		pointerTailLength			: 5,
+		pointerHeadLengthPercent	: 0.9,
+		
+		minValue					: 0,
+		maxValue					: 10,
+		
+		minAngle					: -90,
+		maxAngle					: 90,
+		
+		transitionMs				: 750,
+		
+		majorTicks					: 5,
+		labelFormat					: d3.format(',g'),
+		labelInset					: 10,
+		
+		arcColorFn					: d3.interpolateHsl(d3.rgb('#e8e2ca'), d3.rgb('#3e6c0a'))
+	};
+
+	var scale = undefined;
+	var ticks = undefined;
+	var tickData = undefined;
+
 	var svgContainer = d3.select("div#dial")
 							.append("svg")
 							.attr("width", w)
 							.attr("height", h);
 
-	var outsideCircle = svgContainer.selectAll("circle")
+	
+
+
+    
+
+
+
+   
+    
+    var outsideCircle = svgContainer.selectAll("circle")
 								.data(data)
 								.enter()
 								.append("circle")
@@ -31,6 +70,23 @@ function dial(){
 								.attr("cy", function(d){return d.cy; })
 								.attr("r", function(d){return d.radius; })
 								.style("fill", function(d){ return d.color });
+
+	var ticks = d3.svg.arc()
+    				.innerRadius(75)
+    				// .innerRadius((5 * Math.PI) / 6)
+    				.outerRadius(77)
+    				.startAngle(-1)
+    				.endAngle(1)
+
+	var tick = svgContainer.append("svg:path")
+
+    						.attr("id", "tick")
+    						.attr("d", ticks)
+    						.attr("fill", "#999")
+    						.attr("width", 150)
+    						.attr("height", 150)
+    						.style("fill", "#999")
+    						.attr("transform", "translate(100,100)");
 
 	var needleLineFn = d3.svg.line()
 						.x(function(d){ return d.x; })
@@ -42,6 +98,16 @@ function dial(){
 							.attr("d", needleLineFn(triangleData))
 							.attr("fill", "#666");
 
+
+	// a linear scale that maps domain values to a percent from 0..1
+		/*scale = d3.scale.linear()
+			.range([0,1])
+			.domain([config.minValue, config.maxValue]);
+			
+		ticks = scale.ticks(config.majorTicks);
+		tickData = d3.range(config.majorTicks).map(function() {return 1/config.majorTicks;});
+
+	
 /*
 	var gauge = d3.arcslider()
                 .radius(120)
