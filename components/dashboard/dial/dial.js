@@ -23,7 +23,7 @@ function dial(){
 		clipWidth					: 200,
 		clipHeight					: 110,
 		ringInset					: 20,
-		ringWidth					: 20,
+		ringWidth					: 60,
 		
 		pointerWidth				: 10,
 		pointerTailLength			: 5,
@@ -47,21 +47,14 @@ function dial(){
 	var scale = undefined;
 	var ticks = undefined;
 	var tickData = undefined;
+	var range = config.maxAngle - config.minAngle;
 
 	var svgContainer = d3.select("div#dial")
 							.append("svg")
 							.attr("width", w)
 							.attr("height", h);
 
-	
-
-
-    
-
-
-
-   
-    
+	// Build the Outer Circle
     var outsideCircle = svgContainer.selectAll("circle")
 								.data(data)
 								.enter()
@@ -71,17 +64,17 @@ function dial(){
 								.attr("r", function(d){return d.radius; })
 								.style("fill", function(d){ return d.color });
 
-	var ticks = d3.svg.arc()
+	var tickArcSetup = d3.svg.arc()
     				.innerRadius(75)
     				// .innerRadius((5 * Math.PI) / 6)
     				.outerRadius(77)
     				.startAngle(-1)
     				.endAngle(1)
 
-	var tick = svgContainer.append("svg:path")
+	var tickArcObj = svgContainer.append("svg:path")
 
     						.attr("id", "tick")
-    						.attr("d", ticks)
+    						.attr("d", tickArcSetup)
     						.attr("fill", "#999")
     						.attr("width", 150)
     						.attr("height", 150)
@@ -99,6 +92,48 @@ function dial(){
 							.attr("fill", "#666");
 
 
+	function makeTicks(){
+		scale = d3.scale.linear()
+					.range([0,1])
+					.domain([config.minValue, config.maxValue]);
+
+		ticks = scale.ticks(config.majorTicks);
+		tickData = d3.range(config.majorTicks).map(function(d){ return scale(d); });
+
+		tickObjs = svgContainer.selectAll('line')
+						.data(ticks)
+						.enter()
+							.append('line')
+							.attr('class', 'tickline')
+							.attr('x1', 0)
+							.attr('y1', 0)
+							.attr('x2', 0)
+							.attr('y2', 30)
+
+							.attr('transform', function(d){
+								var ratio = scale(d),
+								    newAngle = config.minAngle + (ratio * range) * -1;
+
+								    console.log("RATIO - RANGE - ANGLE:")
+								    console.log(ratio);
+								    console.log(range);
+								    console.log(newAngle);
+								    console.log("\n");
+								//var r = 90;
+									var x = ratio * 150;
+
+								    // return 'rotate(' + newAngle + ') translate(0, ' + (config.labelInset + config.ringWidth) + ')';
+								    return 'rotate('+newAngle+') translate('+x+', '+(config.minAngle + config.ringWidth)+')';
+
+
+							})
+							.style('stroke', '#666')
+							.style('stroke-width', '2pz');
+
+
+	}
+
+	makeTicks();
 	// a linear scale that maps domain values to a percent from 0..1
 		/*scale = d3.scale.linear()
 			.range([0,1])
