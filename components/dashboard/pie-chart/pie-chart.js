@@ -1,14 +1,12 @@
 (function(){
 
 
-function pieChart(){
+function pieChart(_data){
 	var w = 300,                        	//width
 	    h = 300,                            //height
 	    r = 100,                            //radius
 	    color = d3.scale.category20b();     //builtin range of colors
-	    data = [{"label":"one", "value":20}, 
-	            {"label":"two", "value":30}, 
-	            {"label":"three", "value":50}];
+	    data = _data;
 	    
 	var vis = d3.select("div#pie-chart")
 	    .append("svg:svg")              //create the SVG element inside the <body>
@@ -44,6 +42,11 @@ function pieChart(){
 	        .text(function(d, i) { return data[i].label; });        //get the label from our original data array
 }
 
-pieChart();
+var data = [{"label":"one", "value":20}, 
+	            {"label":"two", "value":30}, 
+	            {"label":"three", "value":20},
+	            {"label":"four", "value":30}];
+
+pieChart(data);
 
 }());
