@@ -94,11 +94,14 @@ function dial(){
 
 	function makeTicks(){
 		scale = d3.scale.linear()
-					.range([0,1])
-					.domain([config.minValue, config.maxValue]);
+					.domain([config.minValue, config.maxValue])
+					.range([0,1]);
+					
 
 		ticks = scale.ticks(config.majorTicks);
 		tickData = d3.range(config.majorTicks).map(function(d){ return scale(d); });
+
+		console.log(tickData);
 
 		tickObjs = svgContainer.selectAll('line')
 						.data(ticks)
@@ -120,10 +123,11 @@ function dial(){
 								    console.log(newAngle);
 								    console.log("\n");
 								//var r = 90;
-									var x = ratio * 150;
+									var x = ratio * 75;
+									x+= 60;
 
 								    // return 'rotate(' + newAngle + ') translate(0, ' + (config.labelInset + config.ringWidth) + ')';
-								    return 'rotate('+newAngle+') translate('+x+', '+(config.minAngle + config.ringWidth)+')';
+								    return 'translate('+x+', '+(config.minAngle + config.ringWidth)+')';
 
 
 							})
